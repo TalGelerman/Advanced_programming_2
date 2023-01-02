@@ -19,7 +19,7 @@ int main(int argc, char** argv) {
 
     // Create a socket
     int clientSocket = socket(AF_INET, SOCK_STREAM, 0);
-//    if (clientSocket < 0) {
+    if (clientSocket < 0) {
         perror("Error creating client socket");
         cerr << "Error creating client socket" << endl;
         return 1;
@@ -27,9 +27,10 @@ int main(int argc, char** argv) {
 
     // Connect to the server
     struct sockaddr_in addr{};
+    memset(&addr, 0, sizeof(addr));     // reset the struct
     addr.sin_family = AF_INET;
     addr.sin_port = htons(clientPort);
-    addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    addr.sin_addr.s_addr = inet_addr(ipAddress);
     if (connect(clientSocket, (struct sockaddr*) &addr, sizeof(addr)) < 0) {
         perror("Error connecting to server");
         cerr << "Error connecting to server" << endl;
@@ -60,11 +61,13 @@ int main(int argc, char** argv) {
         // Receive a response from the server
         char buffer[MAX_SIZE_MESSAGE];
         int exceptedDataLen = sizeof(buffer);
+        // TODO: is casting necessary?
         int bytesReceived = (int) recv(clientSocket, buffer, exceptedDataLen, 0);
         if (bytesReceived < 0) {
             perror("Error receiving data from server");
             cerr << "Error receiving data from server" << endl;
-            return 1;
+            // todo: send -1 to the server, so it will close the client socket there.
+            break;
         } else if (bytesReceived == 0) {
             cout << "Server response: something went wrong" << endl;
         } else {
