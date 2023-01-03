@@ -76,7 +76,6 @@ int stringValidation (string input){
         return 0;
     }
 
-
     //checks if the end of the stream has been reached
     if(!ss.eof()){
         return 0;
