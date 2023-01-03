@@ -15,7 +15,6 @@
 
 #include <algorithm>
 
-////
 using namespace std;
 
 /* Constants */
