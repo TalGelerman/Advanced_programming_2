@@ -12,7 +12,7 @@
 using namespace std;
 
 const int MAX_SIZE_MESSAGE = 4096;
-
+//
 int ipAndPortValidation (const char *ipAddress , const int port){
     struct in_addr ipAdd{};
     int ipValid = 0 , portValid = 0;
