@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.20)
-project(ass02)
+project(ass3)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(ass02 main.cpp Distances.cpp GenericVector.cpp Server.cpp Server.h Client.cpp Client.h)
+add_executable(ass3
+        main.cpp Distances.cpp GenericVector.cpp Server.cpp Server.h)
+add_executable(Client
+        Client.cpp Client.h)
