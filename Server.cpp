@@ -18,6 +18,7 @@ const int MAX_SIZE_MESSAGE = 4096;
 const int AUC_POWER = 2;
 const int MAN_POWER = 1;
 const int POWER = 2;
+const int MAXIMUM_CLIENTS = 5;
 
 /**
  * This function validates a given string. If the string contains a valid double number it returns true, otherwise
@@ -425,7 +426,7 @@ int main(int argc, char** argv) {
     }
 
     // Listen for incoming connections
-    if (listen(serverSocket, 5) < 0) {  // todo: listen to up to 5 clients at a time.
+    if (listen(serverSocket, MAXIMUM_CLIENTS) < 0) {
         cerr << "Error listening for incoming connections" << endl;
         return -1;   // todo: should we return 1?
     }
