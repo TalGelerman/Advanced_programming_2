@@ -402,7 +402,7 @@ int main(int argc, char** argv) {
     int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (serverSocket < 0) {
         perror("Error creating server socket");
-        return -1;  // todo: not exit(1)
+        exit(1);
     }
 
     // Bind the socket to a port
@@ -413,7 +413,7 @@ int main(int argc, char** argv) {
     // bind the socket with the bind command and check if the binding is done:
     if (bind(serverSocket, (struct sockaddr*) &addr, sizeof(addr)) < 0) {
         perror("Error binding socket to port");
-        return -1;   // todo: not exit(1)
+        exit(1);
     }
 
     int vectorSize = 0;
@@ -422,64 +422,67 @@ int main(int argc, char** argv) {
     // Check if the DB is empty, if so- exit the program:
     if(vectorsDB.empty()) {
         perror("Error: Vector file is empty");
-        return -1; // todo: not exit(1)
+        exit(1);
     }
 
     // Listen for incoming connections
-    while (listen(serverSocket, MAXIMUM_CLIENTS) < 0) {
-
-    }
     if (listen(serverSocket, MAXIMUM_CLIENTS) < 0) {
         cerr << "Error listening for incoming connections" << endl;
-        return -1;   // todo: should we return 1?
+        exit(1);
     }
 
-    // Accept an incoming connection
-    struct sockaddr_in client_addr{};  // create address struct for the sender information.
-    unsigned int client_addr_size = sizeof(client_addr);
-    // Accept command to create a new socket for the client that wants to connect the server:
-    int clientSocket = accept(serverSocket, (struct sockaddr*)&client_addr, &client_addr_size);
-    if (clientSocket < 0) {
-        perror("Error accepting incoming connection");
-        return -1;  // todo: should we return 1?
-    }
-
-    char buffer[MAX_SIZE_MESSAGE];      // create a buffer for the client of 4096 bytes.
-    int dataLength = sizeof(buffer);    // the maximum length of data to receive from the client socket.
-    int readBytes = (int) recv(clientSocket, buffer, dataLength, 0);  // receive the client message from its socket to buffer.
-
-    if (readBytes == 0) {
-        // connection is closed
-        perror("Error: No message received from the client");
-        return -1;  // todo: should we return 1?
-    } else if (readBytes < 0) {
-        // error:
-        perror("Error: Couldn't read message from the client");
-        return -1;  // todo: should we return 1?
-    } else {
-        // print the buffer (message from the user):
-        cout << buffer << endl;
-        string distanceAlgorithm;   // Declare user requested distance algorithm.
-        int k;  // Declare K.
-        // Check if the given vector is valid:
-        bool flag = false;
-        vector<double> newVector = splitAndValidate(buffer, &distanceAlgorithm, &k, &flag, vectorSize);
-        if (flag) {
-            flag = false;
-            perror("Error: incorrect input");
-            return -1; // todo: what to return?
+    while (true) {
+        // Accept an incoming connection
+        struct sockaddr_in client_addr{};  // create address struct for the sender information.
+        unsigned int client_addr_size = sizeof(client_addr);
+        // Accept command to create a new socket for the client that wants to connect the server:
+        int clientSocket = accept(serverSocket, (struct sockaddr*)&client_addr, &client_addr_size);
+        if (clientSocket < 0) {
+            perror("Error accepting incoming connection");
+            exit(1);
         }
-        // Calculate the distances of each vector from the given vector:
-        string closestVectorType = calculateDistances(vectorsDB, newVector, distanceAlgorithm);
-        // Apply KNN on the VectorDB to find the k closest neighborhoods:
-        vectorsDB = quickSelect(vectorsDB, 0, (int) vectorsDB.size(), k);
-        string vectorClass = getKNeighborhood(vectorsDB, k, closestVectorType);
-        // Send the vector classification back to the client:
-        const char* message = vectorClass.c_str();
-        int sentBytes = (int) send(clientSocket, buffer, strlen(message), 0);
-        if (sentBytes < 0) {
-            perror("Error sending message to the client");
-            return -1;  // todo: what to return?
+
+        while (true) {
+            char buffer[MAX_SIZE_MESSAGE];      // create a buffer for the client of 4096 bytes.
+            int dataLength = sizeof(buffer);    // the maximum length of data to receive from the client socket.
+            int readBytes = (int) recv(clientSocket, buffer, dataLength, 0);  // receive the client message from its socket to buffer.
+            if (readBytes == 0) {
+                break;
+            } else if (readBytes < 0) {
+                perror("Error: Couldn't read message from the client");
+                break;
+            } else {
+                // print the buffer (message from the user):
+                cout << buffer << endl;
+                const char* message;    // declare a message to send.
+                string distanceAlgorithm;   // Declare user requested distance algorithm.
+                int k;  // Declare K.
+                // Check if the given vector is valid:
+                bool flag = false;
+                vector<double> newVector = splitAndValidate(buffer, &distanceAlgorithm, &k, &flag, vectorSize);
+                if (flag) {
+                    flag = false;
+                    message = "Error: incorrect input";
+                    int sentBytes = (int) send(clientSocket, buffer, strlen(message), 0);
+                    if (sentBytes < 0) {
+                        perror("Error sending message to the client");
+                        exit(1);
+                    }
+                    break;
+                }
+                // Calculate the distances of each vector from the given vector:
+                string closestVectorType = calculateDistances(vectorsDB, newVector, distanceAlgorithm);
+                // Apply KNN on the VectorDB to find the k closest neighborhoods:
+                vectorsDB = quickSelect(vectorsDB, 0, (int) vectorsDB.size(), k);
+                string vectorClass = getKNeighborhood(vectorsDB, k, closestVectorType);
+                // Send the vector classification back to the client:
+                message = vectorClass.c_str();
+                int sentBytes = (int) send(clientSocket, buffer, strlen(message), 0);
+                if (sentBytes < 0) {
+                    perror("Error sending message to the client");
+                    exit(1);
+                }
+            }
         }
     }
 
