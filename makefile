@@ -1,10 +1,10 @@
 all: client.out server.out
 
 client.out: Client.o GenericVector.o Distances.o
-	g++ -std=c++11 ./*.o -o Client.out
+	g++ -std=c++11 Client.o GenericVector.o Distances.o -o Client.out
 
 server.out: Server.o GenericVector.o Distances.o
-	g++ -std=c++11 ./*.o -o Server.out
+	g++ -std=c++11 Server.o GenericVector.o Distances.o -o Server.out
 
 GenericVector.o: GenericVector.cpp GenericVector.h
 	g++ -std=c++11 -c GenericVector.cpp

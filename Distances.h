@@ -1,6 +1,7 @@
 #ifndef ASS01_DISTANCES_H
 #define ASS01_DISTANCES_H
 #include <cmath>
+#include <vector>
 
 /**
  * @author Ido Ziv, 318420254

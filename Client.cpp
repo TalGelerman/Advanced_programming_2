@@ -18,7 +18,7 @@ int ipAndPortValidation (const char *ipAddress , const int port){
     if(inet_pton(AF_INET, ipAddress, &ipAdd) == 1){
         ipValid = 1;
     }
-    if((port>=0) && (port <= 65535)){
+    if((port>=1024) && (port <= 65535)){
         portValid = 1;
     }
     //check different cases for different error messages
@@ -49,7 +49,6 @@ int stringValidation (const string& input){
         vector.push_back(doubleNum);
     }
     if (vector.empty()){
-        cout<< "invalid input"<< endl;
         return 0;
     }
 
@@ -59,7 +58,6 @@ int stringValidation (const string& input){
     }
 
     if(str.empty()){
-        cout<< "invalid input"<< endl;
         return 0;
     }
 
@@ -69,7 +67,6 @@ int stringValidation (const string& input){
     }
 
     if(num < 0){
-        cout<< "invalid input"<< endl;
         return 0;
     }
 
@@ -118,7 +115,7 @@ int main(int argc, char** argv) {
 
     // Send input from a user to the server:
     while (true) {
-        char buffer[MAX_SIZE_MESSAGE] = {0};
+        char buffer[MAX_SIZE_MESSAGE];
         bool flag = true;
 
         // Get user input:
@@ -143,11 +140,12 @@ int main(int argc, char** argv) {
         //cleans the buffer
         memset(&buffer, 0, sizeof(buffer));
         //takes the input and change it to array of chars and adds /0 to the end of the string
-        char inputArray[input.size()];
-        strncpy(inputArray, input.c_str(), input.size());
+        char inputArray[input.size() + 1];
+        memset(&inputArray, 0, sizeof(inputArray));
+        strcpy(inputArray, input.c_str());
        // inputArray[input.size()] = '\0';
 
-        unsigned long dataLength = input.size();
+        unsigned long dataLength = input.size() + 1;
         int sentBytes = (int) send(clientSocket, inputArray, dataLength, 0);
         if (sentBytes < 0) {
             perror("Error: message was not sent to the server");
@@ -167,7 +165,7 @@ int main(int argc, char** argv) {
             cout << "connection is closed" << endl;
             break;
         } else {
-            cout << "Server response: " << string(buffer, bytesReceived) << endl;
+            cout << "Server response: " << buffer << endl;
         }
     }
 

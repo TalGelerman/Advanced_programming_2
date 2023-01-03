@@ -11,7 +11,7 @@
 #include "GenericVector.h"
 #include "Distances.h"
 #include <stdio.h>
-
+#include <sstream>
 
 #include <algorithm>
 
@@ -153,27 +153,10 @@ vector<GenericVector> readFromFiles(const string& path, int* vectorSize) {
  */
 vector<string> removeSpaces (const string& str) {
     vector<string> strings;
-    int counter = 1, j = 0;
-    for (int i = 0; i < str.length() - 1; i++) {
-        if (j >= str.length()){
-            break;
-        }
-
-        for (j = i + 1; j < str.length(); j++) {
-            if (str[i] == ' ') {
-                i++;
-                continue;
-            }
-            if (str[j] == ' ') {
-                strings.push_back(str.substr(i, counter));
-                i = j + 1;
-                j = i;
-                counter = 1;
-            } else {
-                counter++;
-            }
-        }
-    }
+    string s;
+    stringstream strStream(str);
+    while(strStream >> s)
+        strings.push_back(s);
     return strings;
 }
 
@@ -218,15 +201,24 @@ bool validateDistance(const string& str) {
 vector<double> splitAndValidate (const char* str, string* distanceAlgo, int* k, bool* flag, int vectorSize) {
     vector<string> strings = removeSpaces(str);
     vector<double> numbers;
-
+    int i = 0;
     for (const auto& currStr : strings) {
+        i++;
         if (validateDouble(currStr)) {
             numbers.push_back(stod(currStr));
         } else if (validateDistance(currStr)) {
             *distanceAlgo = currStr;
-        } else if (validateK(currStr)) {
-            *k = stoi(currStr);
-        } else {
+            try{
+            *k = stoi(strings.at(i));
+            if(*k <= 0){
+                throw exception();
+            }
+            } catch (exception &e) {
+                *flag = true;
+            }
+            break;
+        }
+        else {
             *flag = true;
         }
     }
@@ -466,7 +458,8 @@ int main(int argc, char** argv) {
         }
 
         while (true) {
-            char buffer[MAX_SIZE_MESSAGE] = {0};      // create a buffer for the client of 4096 bytes.
+            char buffer[MAX_SIZE_MESSAGE];
+            memset(&buffer, 0, sizeof(buffer)); // create a buffer for the client of 4096 bytes.
             int dataLength = sizeof(buffer);    // the maximum length of data to receive from the client socket.
             int readBytes = (int) recv(clientSocket, buffer, dataLength, 0);  // receive the client message from its socket to buffer.
             if (readBytes == 0) {
@@ -477,30 +470,30 @@ int main(int argc, char** argv) {
             } else {
                 // print the buffer (message from the user):
                 cout << buffer << endl;
-                const char* message;    // declare a message to send.
+                char* message;    // declare a message to send.
                 string distanceAlgorithm;   // Declare user requested distance algorithm.
                 int k;  // Declare K.
                 // Check if the given vector is valid:
                 bool flag = false;
                 vector<double> newVector = splitAndValidate(buffer, &distanceAlgorithm, &k, &flag, vectorSize);
-                if (flag) {
-                    flag = false;
-                    message = "Error: incorrect input";
-                    int sentBytes = (int) send(clientSocket, buffer, strlen(message), 0);
-                    if (sentBytes < 0) {
-                        perror("Error sending message to the client");
-                        exit(1);
-                    }
-                    break;
+                if(k > vectorsDB.size())
+                    flag = true;
+                memset(&buffer, 0, sizeof(buffer));
+                string closestVectorType;
+                string invalid = "invalid input";
+                string vectorClass;
+                if(flag) {
+                    strcpy(buffer, invalid.c_str());
+                } else {
+                    // Calculate the distances of each vector from the given vector:
+                    closestVectorType = calculateDistances(vectorsDB, newVector, distanceAlgorithm);
+                    // Apply KNN on the VectorDB to find the k closest neighborhoods:
+                    vectorsDB = quickSelect(vectorsDB, 0, (int) vectorsDB.size(), k);
+                    vectorClass = getKNeighborhood(vectorsDB, k, closestVectorType);
+                    // Send the vector classification back to the client:
+                    strcpy(buffer, vectorClass.c_str());
                 }
-                // Calculate the distances of each vector from the given vector:
-                string closestVectorType = calculateDistances(vectorsDB, newVector, distanceAlgorithm);
-                // Apply KNN on the VectorDB to find the k closest neighborhoods:
-                vectorsDB = quickSelect(vectorsDB, 0, (int) vectorsDB.size(), k);
-                string vectorClass = getKNeighborhood(vectorsDB, k, closestVectorType);
-                // Send the vector classification back to the client:
-                message = vectorClass.c_str();
-                int sentBytes = (int) send(clientSocket, buffer, strlen(message), 0);
+                int sentBytes = (int) send(clientSocket, buffer, strlen(buffer), 0);
                 if (sentBytes < 0) {
                     perror("Error sending message to the client");
                     exit(1);
