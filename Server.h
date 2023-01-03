@@ -24,5 +24,6 @@ vector<GenericVector> quickSelect(vector<GenericVector> &arr, int low, int high,
 string calculateDistances(vector<GenericVector> &vectorsArr, const vector<double>& newVector, const string& algorithm);
 string classifyVector(const map<string, int>& map, string& closestVectorType);
 string getKNeighborhood(vector<GenericVector> vectorsDB, int k, string& closestVectorType);
+bool validatePort(int port);
 
 #endif //MAIN_CPP_SERVER_H
