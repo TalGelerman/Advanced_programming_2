@@ -12,7 +12,7 @@
 using namespace std;
 
 const int MAX_SIZE_MESSAGE = 4096;
-
+//
 int ipAndPortValidation (const char *ipAddress , const int port){
     struct in_addr ipAdd{};
     int ipValid = 0 , portValid = 0;
@@ -43,7 +43,7 @@ int ipAndPortValidation (const char *ipAddress , const int port){
 int stringValidation (string input){
     double doubleNum;
     string str;
-    int num;
+    int num = -1;
     vector<double> vector;
 
     //go over the vector values
@@ -70,8 +70,11 @@ int stringValidation (string input){
     if(ss >> num){
         ss << num;
     }
-    //////////////////////////check the int
 
+    if(num < 0){
+        cout<< "invalid input"<< endl;
+        return 0;
+    }
 
     //checks if the end of the stream has been reached
     if(!ss.eof()){
