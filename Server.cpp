@@ -19,6 +19,8 @@ const int AUC_POWER = 2;
 const int MAN_POWER = 1;
 const int POWER = 2;
 const int MAXIMUM_CLIENTS = 5;
+const int PORT_TOP_RANGE = 65535;
+const int PORT_LOW_RANGE = 1024;
 
 /**
  * This function validates a given string. If the string contains a valid double number it returns true, otherwise
@@ -391,12 +393,28 @@ string getKNeighborhood(vector<GenericVector> vectorsDB, int k, string& closestV
     return classifyVector(typeOfVectorsMap, closestVectorType);
 }
 
+/**
+ * It returns true if the port number is between 1024 and 65535, and false otherwise
+ *
+ * @param port The port number to be validated.
+ *
+ * @return a boolean value.
+ */
+bool validatePort(int port) {
+    if (port <= PORT_TOP_RANGE && port >= PORT_LOW_RANGE) {
+        return true;
+    } else return false;
+}
+
 int main(int argc, char** argv) {
     // Get the file path for the server:
-    const char* filePath = argv[1];
+    char* filePath = argv[1];
     // Get the port for the server:
     const int serverPort = stoi(argv[2]);
-    // todo: Do i need to validateDouble the port and the path?
+    if (!validatePort(serverPort)) {
+        perror("Error: Given port number is invalid.");
+        exit(1);
+    }
 
     // Create a TCP socket:
     int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
