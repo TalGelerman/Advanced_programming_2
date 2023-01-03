@@ -40,7 +40,7 @@ int ipAndPortValidation (const char *ipAddress , const int port){
 }
 
 
-int stringValidation (string input){
+int stringValidation (const string& input){
     double doubleNum;
     string str;
     int num = -1;
