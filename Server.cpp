@@ -4,12 +4,17 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <vector>
-#include <string>
+#include <string.h>
 #include <fstream>
 #include <map>
 #include <limits>
 #include "GenericVector.h"
 #include "Distances.h"
+#include <stdio.h>
+
+
+#include <algorithm>
+
 
 using namespace std;
 
@@ -183,7 +188,7 @@ bool validateK(const string& k) {
     if (k == "0") {
         return false;
     }
-    return all_of(k.begin(), k.end(), ::isdigit);
+    return std::all_of(k.begin(), k.end(), ::isdigit);
 }
 
 /**
@@ -461,7 +466,7 @@ int main(int argc, char** argv) {
         }
 
         while (true) {
-            char buffer[MAX_SIZE_MESSAGE];      // create a buffer for the client of 4096 bytes.
+            char buffer[MAX_SIZE_MESSAGE] = {0};      // create a buffer for the client of 4096 bytes.
             int dataLength = sizeof(buffer);    // the maximum length of data to receive from the client socket.
             int readBytes = (int) recv(clientSocket, buffer, dataLength, 0);  // receive the client message from its socket to buffer.
             if (readBytes == 0) {

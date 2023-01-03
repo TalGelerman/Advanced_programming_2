@@ -1,4 +1,3 @@
-#include "Client.h"
 #include <iostream>
 #include <sys/socket.h>
 #include <stdio.h>
@@ -12,7 +11,6 @@
 using namespace std;
 
 const int MAX_SIZE_MESSAGE = 4096;
-//
 int ipAndPortValidation (const char *ipAddress , const int port){
     struct in_addr ipAdd{};
     int ipValid = 0 , portValid = 0;
@@ -38,7 +36,6 @@ int ipAndPortValidation (const char *ipAddress , const int port){
     }
     return 1;
 }
-
 
 int stringValidation (const string& input){
     double doubleNum;
@@ -121,7 +118,7 @@ int main(int argc, char** argv) {
 
     // Send input from a user to the server:
     while (true) {
-        char buffer[MAX_SIZE_MESSAGE];
+        char buffer[MAX_SIZE_MESSAGE] = {0};
         bool flag = true;
 
         // Get user input:
@@ -133,7 +130,7 @@ int main(int argc, char** argv) {
 
         int inputValid = stringValidation(input);
         if (inputValid == 0){
-
+        //////////////////////////////////////////////
         }
         //convert
 
@@ -146,11 +143,11 @@ int main(int argc, char** argv) {
         //cleans the buffer
         memset(&buffer, 0, sizeof(buffer));
         //takes the input and change it to array of chars and adds /0 to the end of the string
-        char inputArray[input.size() +1];
+        char inputArray[input.size()];
         strncpy(inputArray, input.c_str(), input.size());
-        inputArray[input.size()] = '\0';
+       // inputArray[input.size()] = '\0';
 
-        int dataLength = strlen(inputArray);
+        unsigned long dataLength = input.size();
         int sentBytes = (int) send(clientSocket, inputArray, dataLength, 0);
         if (sentBytes < 0) {
             perror("Error: message was not sent to the server");
