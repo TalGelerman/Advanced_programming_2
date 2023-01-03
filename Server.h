@@ -22,7 +22,7 @@ void swap(GenericVector* vector1, GenericVector* vector2);
 int partition (vector<GenericVector> &arr, int low, int high);
 vector<GenericVector> quickSelect(vector<GenericVector> &arr, int low, int high, int k);
 string calculateDistances(vector<GenericVector> &vectorsArr, const vector<double>& newVector, const string& algorithm);
-string classifyVector(const map<string, int>& map, const string& closestVectorType);
-string getKNeighborhood(vector<GenericVector> vectorsDB, int k, const string& closestVectorType);
+string classifyVector(const map<string, int>& map, string& closestVectorType);
+string getKNeighborhood(vector<GenericVector> vectorsDB, int k, string& closestVectorType);
 
 #endif //MAIN_CPP_SERVER_H
