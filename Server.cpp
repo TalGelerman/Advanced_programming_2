@@ -426,6 +426,9 @@ int main(int argc, char** argv) {
     }
 
     // Listen for incoming connections
+    while (listen(serverSocket, MAXIMUM_CLIENTS) < 0) {
+
+    }
     if (listen(serverSocket, MAXIMUM_CLIENTS) < 0) {
         cerr << "Error listening for incoming connections" << endl;
         return -1;   // todo: should we return 1?
