@@ -8,6 +8,13 @@
 #include <sstream>
 #include <vector>
 
+/**
+ * @author Ido Ziv, 318420254
+ * @author Tal Gelerman, 322280850
+ * @version ass3
+ * @since 04.01.23
+ */
+
 using namespace std;
 /* Constants */
 const int MAX_SIZE_MESSAGE = 4096;

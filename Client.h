@@ -12,6 +12,13 @@
 #include <stdlib.h>
 #include <cstring>
 
+/**
+ * @author Ido Ziv, 318420254
+ * @author Tal Gelerman, 322280850
+ * @version ass3
+ * @since 04.01.23
+ */
+
 int ipAndPortValidation (const char *ipAddress , const int port);
 int stringValidation (const std::string& input);
 

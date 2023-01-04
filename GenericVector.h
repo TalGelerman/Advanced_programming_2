@@ -1,6 +1,13 @@
 #ifndef MAIN_CPP_IRISVECTOR_H
 #define MAIN_CPP_IRISVECTOR_H
 
+/**
+ * @author Ido Ziv, 318420254
+ * @author Tal Gelerman, 322280850
+ * @version ass3
+ * @since 04.01.23
+ */
+
 #include <string>
 #include <vector>
 
