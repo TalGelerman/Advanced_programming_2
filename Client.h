@@ -12,6 +12,8 @@
 #include <stdlib.h>
 #include <cstring>
 
+int ipAndPortValidation (const char *ipAddress , const int port);
+int stringValidation (const std::string& input);
 
 #include <unistd.h>
 
