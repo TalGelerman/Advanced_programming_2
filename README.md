@@ -38,9 +38,17 @@ make
 ```
 4. A file named "client.out" and "Server.out" should be created on this folder. You are ready to run the project with the command:
 ```
-./client K filePath distanceMetric
+./server.out file port 
 ```
-While K, filepath and distanceMetric are the arguments for the algorithm.
+While file is a file path, and port
+
+5. use the command for client too:
+```
+./client.out ip port 
+```
+While file is a valid ip and port (pay attention you need the same port number for both server and client)
+
+6.Now, the program expect the user to enter an input - vector distance k , While vector is the unclassified vector, distance is the algorithm method and k.
 
 The program expect:
 - Same port number for both client and server, and to in range of 1024 to 65535
