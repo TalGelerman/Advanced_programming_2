@@ -16,7 +16,7 @@ In order to optimize the project we defined a generic class for a generic vector
 This class contains the vector's type name, the vector's values and a distance function, which is also generic, that calculates the distance from an additional vector according to a calculation method.
 These generic class and function give the program the functionality to get any  type of vector, with differnt distance calculating methods (that we implemented in ass01) and to calssify thr vector's type.
 
-An additional optimization we applied in this code was added after we noticed that the Euclidean, Manhattan and Minkowski algorithms all have the same form – and the only difference is the power.
+An additional optimization we applied in this codeת was added after we noticed that the Euclidean, Manhattan and Minkowski algorithms all have the same form – and the only difference is the power.
 Therefore, we defined the function “calculateDistance” which gets the two vectors and and an int p as the power for the formula.
 - For Euclidean distance - sqrt(calculateDistance(v1,v2,2))
 - For Taxicab distance - calculateDistance(v1,v2,1)
