@@ -160,20 +160,6 @@ vector<string> removeSpaces (const string& str) {
 }
 
 /**
- * It returns true if the string k is a non-zero integer, and false otherwise
- *
- * @param k the number of clusters to create
- *
- * @return a boolean value.
- */
-bool validateK(const string& k) {
-    if (k == "0") {
-        return false;
-    }
-    return std::all_of(k.begin(), k.end(), ::isdigit);
-}
-
-/**
  * It returns true if the string is one of the five valid distances, and false otherwise
  *
  * @param str the string to be validated
@@ -207,17 +193,16 @@ vector<double> splitAndValidate (const char* str, string* distanceAlgo, int* k, 
             numbers.push_back(stod(currStr));
         } else if (validateDistance(currStr)) {
             *distanceAlgo = currStr;
-            try{
-            *k = stoi(strings.at(i));
-            if(*k <= 0){
-                throw exception();
-            }
+            try {
+                *k = stoi(strings.at(i));
+                if(*k <= 0) {
+                    throw exception();
+                }
             } catch (exception &e) {
                 *flag = true;
             }
             break;
-        }
-        else {
+        } else {
             *flag = true;
         }
     }
@@ -450,7 +435,7 @@ int main(int argc, char** argv) {
         struct sockaddr_in client_addr{};  // create address struct for the sender information.
         unsigned int client_addr_size = sizeof(client_addr);
         // Accept command to create a new socket for the client that wants to connect the server:
-        int clientSocket = accept(serverSocket, (struct sockaddr*)&client_addr, &client_addr_size);
+        int clientSocket = accept(serverSocket, (struct sockaddr*) &client_addr, &client_addr_size);
         if (clientSocket < 0) {
             perror("Error accepting incoming connection");
             exit(1);
@@ -467,17 +452,15 @@ int main(int argc, char** argv) {
                 perror("Error: Couldn't read message from the client");
                 break;
             } else {
-                // print the buffer (message from the user):
-                cout << buffer << endl;
-                char* message;    // declare a message to send.
                 string distanceAlgorithm;   // Declare user requested distance algorithm.
                 int k;  // Declare K.
                 // Check if the given vector is valid:
                 bool flag = false;
                 vector<double> newVector = splitAndValidate(buffer, &distanceAlgorithm, &k, &flag, vectorSize);
-                if(k > vectorsDB.size())
+                if(k > vectorsDB.size()) {
                     flag = true;
-                memset(&buffer, 0, sizeof(buffer));
+                }
+                memset(&buffer, 0, sizeof(buffer)); // reset buffer
                 string closestVectorType;
                 string invalid = "invalid input";
                 string vectorClass;
